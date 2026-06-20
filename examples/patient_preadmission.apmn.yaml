@@ -1,9 +1,9 @@
-# APN v0.1 — Patient Preadmission
+# APMN v0.1 — Patient Preadmission
 # Reference example demonstrating all major APN node types.
-# Compile with TwinTrack: twintrack generate --apn patient_preadmission.apn.yaml
+# Compile with TwinTrack: twintrack generate --apn patient_preadmission.apmn.yaml
 
-apn_version: "0.1"
-xmlns_apn: "http://spec.agentprocessnotation.org/ns/1.0"
+apmn_version: "0.1"
+xmlns_apmn: "http://apmn.kshetra.studio/ns/1.0"
 
 process:
   id: patient_preadmission

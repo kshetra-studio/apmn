@@ -1,24 +1,24 @@
-# APN YAML Schema — v0.1
-# JSON Schema (expressed in YAML) for Agent Process Notation documents.
+# APMN YAML Schema — v0.1
+# JSON Schema (expressed in YAML) for AI Process Model and Notation documents.
 # $schema: https://json-schema.org/draft/2020-12/schema
 
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "http://spec.agentprocessnotation.org/schema/v0.1/apn-schema.yaml"
-title: "Agent Process Notation"
-description: "Schema for APN YAML documents v0.1"
+$id: "http://apmn.kshetra.studio/schema/v0.1/apmn-schema.yaml"
+title: "AI Process Model and Notation"
+description: "Schema for APMN YAML documents v0.1"
 type: object
-required: [apn_version, process, nodes]
+required: [apmn_version, process, nodes]
 
 properties:
 
-  apn_version:
+  apmn_version:
     type: string
     enum: ["0.1"]
     description: "APN specification version this document conforms to"
 
-  xmlns_apn:
+  xmlns_apmn:
     type: string
-    const: "http://spec.agentprocessnotation.org/ns/1.0"
+    const: "http://apmn.kshetra.studio/ns/1.0"
 
   process:
     type: object

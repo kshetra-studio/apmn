@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APN — Agent Process Notation: Standard Proposal</title>
+<title>APN — AI Process Model and Notation: Standard Proposal</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: #1a1a1a; padding: 24px; font-size: 12px; max-width: 960px; margin: 0 auto; }
@@ -234,7 +234,7 @@ code { background: rgba(0,0,0,0.07); padding: 0 4px; border-radius: 3px; font-fa
     <div class="scol col-new">
       <div class="scol-h">Option B — New notation: APN</div>
       <div class="scol-b">
-        Agent Process Notation — new open standard. YAML serialisation. Visual spec. Apache 2.0. TwinTrack is the reference compiler.<br><br>
+        AI Process Model and Notation — new open standard. YAML serialisation. Visual spec. Apache 2.0. TwinTrack is the reference compiler.<br><br>
         <b>Pro:</b> Own the standard, not an extension of someone else's.<br>
         <b>Pro:</b> Design the right mental model (probabilistic, not deterministic).<br>
         <b>Pro:</b> First mover — no competitor exists today.<br><br>
@@ -248,17 +248,17 @@ code { background: rgba(0,0,0,0.07); padding: 0 4px; border-radius: 3px; font-fa
     <div class="verdict-title">Recommendation — Hybrid: APN as a superset of BPMN 2.0</div>
     <div class="verdict-body">
       <b>Start with BPMN 2.0 as the base serialisation.</b> Every APN diagram IS a valid BPMN 2.0 file. APN-specific nodes use extension elements. The APN spec defines the extensions formally (XSD + visual spec).<br><br>
-      Publish at <code>spec.agentprocessnotation.org</code> under Apache 2.0. TwinTrack is the reference parser and compiler. <strong>APN is the source language. TwinTrack is the compiler.</strong>
+      Publish at <code>spec.apmn.kshetra.studio</code> under Apache 2.0. TwinTrack is the reference parser and compiler. <strong>APMN is the source language. TwinTrack is the compiler.</strong>
     </div>
   </div>
 </div>
 
 <!-- PANEL 4 -->
 <div class="panel" id="panel-serialise">
-  <div class="section-title">What an APN file looks like — patient admission example</div>
+  <div class="section-title">What an APMN file looks like — patient admission example</div>
   <div class="yaml-block">
-<span class="y-cmt"># APN — Agent Process Notation v0.1</span><br>
-<span class="y-cmt"># xmlns:apn="http://spec.agentprocessnotation.org/ns/1.0"</span><br><br>
+<span class="y-cmt"># APMN — AI Process Model and Notation v0.1</span><br>
+<span class="y-cmt"># xmlns:apmn="http://apmn.kshetra.studio/ns/1.0"</span><br><br>
 <span class="y-key">process</span>:<br>
 &nbsp;&nbsp;<span class="y-key">id</span>: <span class="y-val">patient_preadmission</span><br>
 &nbsp;&nbsp;<span class="y-key">name</span>: <span class="y-val">Patient Preadmission</span><br>
@@ -290,10 +290,10 @@ code { background: rgba(0,0,0,0.07); padding: 0 4px; border-radius: 3px; font-fa
     <div class="rphase r1">
       <div class="rphase-h"><span class="badge b1">Phase 1 — Now</span> APN in TwinTrack</div>
       <div class="rphase-b"><ul>
-        <li>APN YAML schema v0.1 published</li>
-        <li>TwinTrack reads APN YAML natively</li>
+        <li>APMN YAML schema v0.1 published</li>
+        <li>TwinTrack reads APMN YAML natively</li>
         <li>BPMN 2.0 + <code>apn:</code> extensions as alt input</li>
-        <li>Apache 2.0, GitHub: kshetra-studio/apn-spec</li>
+        <li>Apache 2.0, GitHub: kshetra-studio/apmn</li>
         <li>New node types: agentTask, ragTask, mcpToolTask, confidenceGate</li>
       </ul></div>
     </div>
@@ -303,7 +303,7 @@ code { background: rgba(0,0,0,0.07); padding: 0 4px; border-radius: 3px; font-fa
         <li>Visual spec — shape library for each node type</li>
         <li>BPMN.io plugin to render APN nodes</li>
         <li>VS Code extension — APN language support</li>
-        <li>APN Playground — paste YAML, see diagram</li>
+        <li>APMN Playground — paste YAML, see diagram</li>
         <li>Submit to Orkes, Google as adopting parties</li>
       </ul></div>
     </div>
@@ -312,15 +312,15 @@ code { background: rgba(0,0,0,0.07); padding: 0 4px; border-radius: 3px; font-fa
       <div class="rphase-b"><ul>
         <li>Submit APN to OMG as BPMN 3.0 input</li>
         <li>Partner with Camunda / Flowable communities</li>
-        <li>APN Working Group — open governance</li>
-        <li>Certification: "APN-compatible" badge</li>
+        <li>APMN Working Group — open governance</li>
+        <li>Certification: "APMN-compatible" badge</li>
         <li>Multiple reference implementations (JS, Java, Go)</li>
       </ul></div>
     </div>
   </div>
   <div class="verdict" style="margin-top:10px">
     <div class="verdict-title">Strategic position</div>
-    <div class="verdict-body">TwinTrack is the <b>compiler</b>. APN is the <b>source language</b>. Just as TypeScript compiles to JavaScript for multiple targets, APN compiles to Orkes, Google ADK, LangGraph, AWS Bedrock. The standard lives independently of any runtime vendor — that is the moat.</div>
+    <div class="verdict-body">TwinTrack is the <b>compiler</b>. APMN is the <b>source language</b>. Just as TypeScript compiles to JavaScript for multiple targets, APN compiles to Orkes, Google ADK, LangGraph, AWS Bedrock. The standard lives independently of any runtime vendor — that is the moat.</div>
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 # Contributing to APN
 
-APN is an open community standard. All contributions are welcome.
+APMN is an open community standard. All contributions are welcome.
 
 ## Ways to contribute
 
@@ -19,7 +19,7 @@ APN is an open community standard. All contributions are welcome.
 
 ## Governance
 
-APN is currently maintained by [Kshetra Studio](https://kshetra.studio).  
+APMN is currently maintained by [Kshetra Studio](https://kshetra.studio).  
 The goal is to move to a community working group model at v1.0.
 
 ## License

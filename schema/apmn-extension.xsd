@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  APN Extension Schema — v0.1
+  APMN Extension Schema — v0.1
   XML Schema for apn: extension elements inside BPMN 2.0 extensionElements.
-  Namespace: http://spec.agentprocessnotation.org/ns/1.0
+  Namespace: http://apmn.kshetra.studio/ns/1.0
 -->
 <xs:schema
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:apn="http://spec.agentprocessnotation.org/ns/1.0"
-  targetNamespace="http://spec.agentprocessnotation.org/ns/1.0"
+  xmlns:apmn="http://apmn.kshetra.studio/ns/1.0"
+  targetNamespace="http://apmn.kshetra.studio/ns/1.0"
   elementFormDefault="qualified">
 
   <!-- ── TASK EXTENSIONS ─────────────────────────────────────────────── -->
@@ -21,7 +21,7 @@
       <xs:attribute name="confidence_threshold"  type="xs:decimal"/>
       <xs:attribute name="tools"                 type="xs:string"
                     use="optional" default=""
-                    apn:description="Comma-separated MCP tool URIs or named tool references"/>
+                    apmn:description="Comma-separated MCP tool URIs or named tool references"/>
     </xs:complexType>
   </xs:element>
 
@@ -46,9 +46,9 @@
     <xs:complexType>
       <xs:attribute name="confidence_threshold"  type="xs:decimal"/>
       <xs:attribute name="timeout"               type="xs:string"
-                    apn:description="ISO 8601 duration e.g. PT4H"/>
+                    apmn:description="ISO 8601 duration e.g. PT4H"/>
       <xs:attribute name="escalate_to"           type="xs:string"
-                    apn:description="Node ID to route to on timeout"/>
+                    apmn:description="Node ID to route to on timeout"/>
     </xs:complexType>
   </xs:element>
 
@@ -116,7 +116,7 @@
   <xs:element name="confidenceGate">
     <xs:complexType>
       <xs:attribute name="source"          type="xs:string" use="required"
-                    apn:description="e.g. taskId.confidence"/>
+                    apmn:description="e.g. taskId.confidence"/>
       <xs:attribute name="route_high"      type="xs:string"/>
       <xs:attribute name="route_medium"    type="xs:string"/>
       <xs:attribute name="route_low"       type="xs:string"/>
@@ -129,7 +129,7 @@
   <xs:element name="reasoningGate">
     <xs:complexType>
       <xs:attribute name="source"   type="xs:string" use="required"
-                    apn:description="e.g. taskId.reasoning"/>
+                    apmn:description="e.g. taskId.reasoning"/>
       <xs:attribute name="default"  type="xs:string"/>
     </xs:complexType>
   </xs:element>
@@ -166,7 +166,7 @@
   <xs:element name="escapeGate">
     <xs:complexType>
       <xs:attribute name="watches"              type="xs:string" use="required"
-                    apn:description="Comma-separated node IDs to monitor"/>
+                    apmn:description="Comma-separated node IDs to monitor"/>
       <xs:attribute name="confidence_floor"     type="xs:decimal" default="0.5"/>
       <xs:attribute name="on_failure"           type="xs:string"/>
       <xs:attribute name="on_timeout"           type="xs:string"/>

@@ -1,4 +1,4 @@
-# APN Docs
+# APMN Docs
 
 ## Diagrams
 
@@ -12,13 +12,13 @@ Interactive HTML diagrams — open in any browser.
 
 ## Spec
 
-- [APN Specification v0.1](../spec/apn-v0.1.md)
+- [APMN Specification v0.1](../spec/apmn-v0.1.md)
 
 ## Schema
 
-- [YAML Schema](../schema/apn-schema.yaml)
-- [BPMN Extension XSD](../schema/apn-extension.xsd)
+- [YAML Schema](../schema/apmn-schema.yaml)
+- [BPMN Extension XSD](../schema/apmn-extension.xsd)
 
 ## Examples
 
-- [Patient Preadmission](../examples/patient_preadmission.apn.yaml)
+- [Patient Preadmission](../examples/patient_preadmission.apmn.yaml)

@@ -1,22 +1,22 @@
-# Agent Process Notation — Specification v0.1 (Draft)
+# AI Process Model and Notation — Specification v0.1 (Draft)
 
 **Status:** Draft  
 **Date:** 2026-06-20  
 **Authors:** Kshetra Studio  
-**Namespace:** `http://spec.agentprocessnotation.org/ns/1.0`  
+**Namespace:** `http://apmn.kshetra.studio/ns/1.0`  
 **License:** Apache 2.0
 
 ---
 
 ## 1. Introduction
 
-Agent Process Notation (APN) is an open specification for representing business processes that involve AI agents, large language models (LLMs), retrieval systems, MCP tools, and human participants.
+AI Process Model and Notation (APN) is an open specification for representing business processes that involve AI agents, large language models (LLMs), retrieval systems, MCP tools, and human participants.
 
-APN is designed as a **superset of BPMN 2.0**:
-- Every APN document is a valid BPMN 2.0 document
-- APN extensions use the `apn:` XML namespace inside `<bpmn:extensionElements>`
-- APN also defines a canonical YAML serialisation as the primary authoring format
-- Existing BPMN tools open APN files without modification (extensions are skipped gracefully)
+APMN is designed as a **superset of BPMN 2.0**:
+- Every APMN document is a valid BPMN 2.0 document
+- APMN extensions use the `apn:` XML namespace inside `<bpmn:extensionElements>`
+- APMN also defines a canonical YAML serialisation as the primary authoring format
+- Existing BPMN tools open APMN files without modification (extensions are skipped gracefully)
 
 ### 1.1 Design Principles
 
@@ -33,12 +33,12 @@ APN is designed as a **superset of BPMN 2.0**:
 
 ### 2.1 YAML (primary)
 
-APN YAML is the recommended authoring format. It is human-readable, diff-friendly, and version-control friendly.
+APMN YAML is the recommended authoring format. It is human-readable, diff-friendly, and version-control friendly.
 
 ```yaml
-# APN YAML document
-apn_version: "0.1"
-xmlns_apn: "http://spec.agentprocessnotation.org/ns/1.0"
+# APMN YAML document
+apmn_version: "0.1"
+xmlns_apmn: "http://apmn.kshetra.studio/ns/1.0"
 
 process:
   id: string           # required, unique process identifier
@@ -50,15 +50,15 @@ nodes: [Node]          # ordered list of all nodes
 flows: [Flow]          # sequence flows connecting nodes
 ```
 
-### 2.2 BPMN 2.0 XML with APN extensions (secondary)
+### 2.2 BPMN 2.0 XML with APMN extensions (secondary)
 
 ```xml
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-                  xmlns:apn="http://spec.agentprocessnotation.org/ns/1.0">
+                  xmlns:apmn="http://apmn.kshetra.studio/ns/1.0">
   <bpmn:process id="my_process">
     <bpmn:serviceTask id="task_1" name="Verify Insurance">
       <bpmn:extensionElements>
-        <apn:agentTask model="gemini-2.0-flash"
+        <apmn:agentTask model="gemini-2.0-flash"
                        confidence_threshold="0.95"/>
       </bpmn:extensionElements>
     </bpmn:serviceTask>
@@ -346,12 +346,12 @@ New lane types:
 
 ## 7. Compiler Contract
 
-Any tool claiming APN compliance must:
+Any tool claiming APMN compliance must:
 
-1. Accept APN YAML as defined in this spec
+1. Accept APMN YAML as defined in this spec
 2. Accept BPMN 2.0 XML with `apn:` extension elements
 3. Translate all BPMN 2.0 node types correctly
-4. Translate all APN v0.1 node types to at least one target runtime
+4. Translate all APMN v0.1 node types to at least one target runtime
 5. Produce a `POST_TRANSFORM.md` listing all touchpoints requiring manual completion
 6. Reject documents that reference undefined node types
 
@@ -359,11 +359,11 @@ Any tool claiming APN compliance must:
 
 ## 8. Versioning
 
-APN follows semantic versioning. This document describes APN v0.1.
+APN follows semantic versioning. This document describes APMN v0.1.
 
 Breaking changes increment the minor version until v1.0, after which semver applies strictly.
 
-The `apn_version` field in YAML documents must match a supported spec version.
+The `apmn_version` field in YAML documents must match a supported spec version.
 
 ---
 
