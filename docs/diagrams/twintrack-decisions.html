@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TwinTrack — Design Decisions</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: #1a1a1a; padding: 24px; font-size: 12px; max-width: 960px; margin: 0 auto; }
+.tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+.tab { padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1.5px solid #d0d0d0; background: #f5f5f5; color: #555; }
+.tab.active { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+.panel { display: none; }
+.panel.active { display: block; }
+.section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #555; margin-bottom: 10px; margin-top: 16px; padding-bottom: 4px; border-bottom: 1.5px solid #e0e0e0; }
+.section-title:first-of-type { margin-top: 0; }
+code { background: rgba(0,0,0,0.07); padding: 0 4px; border-radius: 3px; font-family: 'SF Mono', monospace; font-size: 10px; }
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.compare-col { border-radius: 6px; border: 1.5px solid #d8d8d8; overflow: hidden; }
+.compare-header { padding: 8px 10px; font-size: 11px; font-weight: 700; }
+.compare-body { padding: 8px 10px; }
+.compare-body .item { display: flex; gap: 6px; margin-bottom: 5px; font-size: 11px; line-height: 1.4; }
+.dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 1px; }
+.dot-pro { background: #34a853; }
+.dot-con { background: #ea4335; }
+.dot-neu { background: #fbbc04; }
+.col-flat .compare-header   { background: #e8f0fe; color: #1a3a8f; }
+.col-seq .compare-header    { background: #e6f4ea; color: #1a5c2a; }
+.col-nested .compare-header { background: #fef3e2; color: #7a4200; }
+.rec-box { border-radius: 6px; border: 1.5px solid #1a73e8; background: #e8f4fd; padding: 10px 14px; margin-top: 10px; }
+.rec-box .rec-title { font-size: 11px; font-weight: 700; color: #1a3a8f; margin-bottom: 4px; }
+.rec-box .rec-body  { font-size: 11px; color: #1a3a8f; line-height: 1.5; }
+.pt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pt-col { border-radius: 6px; border: 1.5px solid #d8d8d8; overflow: hidden; }
+.pt-header { padding: 7px 10px; font-size: 11px; font-weight: 700; }
+.pt-body { padding: 8px 10px; }
+.pt-item { font-size: 11px; margin-bottom: 5px; line-height: 1.4; display: flex; gap: 6px; }
+.col-guide .pt-header   { background: #e6f4ea; color: #1a5c2a; }
+.col-subtool .pt-header { background: #f3e8fd; color: #4a0072; }
+.flow-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.flow-box { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #f0f0f0; border: 1.5px solid #d0d0d0; }
+.flow-arr { color: #888; font-size: 14px; }
+.flow-box.hl { background: #e8f0fe; border-color: #4285f4; color: #1a3a8f; }
+.mono-block { margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 6px; font-family: 'SF Mono', monospace; font-size: 10px; line-height: 1.7; border: 1.5px solid #e0e0e0; color: #444; }
+</style>
+</head>
+<body>
+<div class="tabs">
+  <div class="tab active" onclick="show('q1')">1 — Output Complexity</div>
+  <div class="tab" onclick="show('q2')">2 — Post-Transform</div>
+</div>
+
+<div class="panel active" id="panel-q1">
+  <div class="section-title">Google ADK output structure — pros &amp; cons</div>
+  <div class="compare-grid">
+    <div class="compare-col col-flat">
+      <div class="compare-header">Flat Agent (default)</div>
+      <div class="compare-body">
+        <div class="item"><div class="dot dot-pro"></div>Simplest generated code</div>
+        <div class="item"><div class="dot dot-pro"></div>Gemini handles sequencing naturally</div>
+        <div class="item"><div class="dot dot-pro"></div>Easy to read and modify</div>
+        <div class="item"><div class="dot dot-con"></div>Order not structurally enforced</div>
+        <div class="item"><div class="dot dot-con"></div>Parallel branches not explicit</div>
+        <div class="item"><div class="dot dot-con"></div>No sub-agent isolation</div>
+      </div>
+    </div>
+    <div class="compare-col col-seq">
+      <div class="compare-header">SequentialAgent</div>
+      <div class="compare-body">
+        <div class="item"><div class="dot dot-pro"></div>Mirrors BPMN flow order exactly</div>
+        <div class="item"><div class="dot dot-pro"></div>Execution order guaranteed</div>
+        <div class="item"><div class="dot dot-pro"></div>Better for regulated workflows</div>
+        <div class="item"><div class="dot dot-con"></div>More generated code complexity</div>
+        <div class="item"><div class="dot dot-con"></div>Harder for non-engineers to follow</div>
+        <div class="item"><div class="dot dot-neu"></div>ADK SDK still maturing</div>
+      </div>
+    </div>
+    <div class="compare-col col-nested">
+      <div class="compare-header">Nested (Parallel+Sequential)</div>
+      <div class="compare-body">
+        <div class="item"><div class="dot dot-pro"></div>Faithfully maps BPMN topology</div>
+        <div class="item"><div class="dot dot-pro"></div>FORK_JOIN → ParallelAgent</div>
+        <div class="item"><div class="dot dot-pro"></div>Clean sub-agent boundaries</div>
+        <div class="item"><div class="dot dot-con"></div>Complex generated code</div>
+        <div class="item"><div class="dot dot-con"></div>Harder to debug</div>
+        <div class="item"><div class="dot dot-con"></div>Brittle if BPMN changes often</div>
+      </div>
+    </div>
+  </div>
+  <div class="rec-box">
+    <div class="rec-title">Recommendation — config flag with default</div>
+    <div class="rec-body">Add <code>adk_style: flat | sequential | nested</code> to YAML config. Default = <code>flat</code>.<br>For Orkes sub-processes: add <code>subprocess_handling: flatten | subworkflow</code>. Default = <code>flatten</code>.</div>
+  </div>
+
+  <div class="section-title">Orkes sub-process handling</div>
+  <div class="compare-grid">
+    <div class="compare-col col-flat">
+      <div class="compare-header">Flatten (default)</div>
+      <div class="compare-body">
+        <div class="item"><div class="dot dot-pro"></div>Single flat task list</div>
+        <div class="item"><div class="dot dot-pro"></div>Simple to register in Orkes</div>
+        <div class="item"><div class="dot dot-con"></div>Loses subprocess boundary</div>
+      </div>
+    </div>
+    <div class="compare-col col-seq">
+      <div class="compare-header">Sub-workflow</div>
+      <div class="compare-body">
+        <div class="item"><div class="dot dot-pro"></div>Separate reusable workflow</div>
+        <div class="item"><div class="dot dot-pro"></div>Matches Orkes SUB_WORKFLOW task</div>
+        <div class="item"><div class="dot dot-con"></div>Multiple JSON files to register</div>
+      </div>
+    </div>
+    <div class="compare-col col-nested">
+      <div class="compare-header">Inline DO_WHILE</div>
+      <div class="compare-body">
+        <div class="item"><div class="dot dot-pro"></div>Loop subprocess → DO_WHILE</div>
+        <div class="item"><div class="dot dot-con"></div>Only works for looping patterns</div>
+        <div class="item"><div class="dot dot-neu"></div>Edge case — low priority</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel-q2">
+  <div class="section-title">Post-transform: guide vs sub-tool</div>
+  <div class="pt-grid">
+    <div class="pt-col col-guide">
+      <div class="pt-header">POST_TRANSFORM.md (inline guide)</div>
+      <div class="pt-body">
+        <div class="pt-item"><div class="dot dot-pro"></div>Zero extra tooling, ships with output</div>
+        <div class="pt-item"><div class="dot dot-pro"></div>Human-readable, auditable</div>
+        <div class="pt-item"><div class="dot dot-pro"></div>Works offline</div>
+        <div class="pt-item"><div class="dot dot-con"></div>User must act on it manually</div>
+        <div class="pt-item"><div class="dot dot-con"></div>Stale if BPMN is re-generated</div>
+      </div>
+    </div>
+    <div class="pt-col col-subtool">
+      <div class="pt-header">twintrack adjust sub-tool</div>
+      <div class="pt-body">
+        <div class="pt-item"><div class="dot dot-pro"></div>Interactive — patch specific touchpoints</div>
+        <div class="pt-item"><div class="dot dot-pro"></div>Always current (reads live output)</div>
+        <div class="pt-item"><div class="dot dot-pro"></div>Can apply changes in one command</div>
+        <div class="pt-item"><div class="dot dot-con"></div>More build effort (v0.3 scope)</div>
+        <div class="pt-item"><div class="dot dot-con"></div>Needs output files to exist first</div>
+      </div>
+    </div>
+  </div>
+  <div class="rec-box" style="border-color:#34a853; background:#e6f4ea;">
+    <div class="rec-title" style="color:#1a5c2a">Recommendation — both, in phases</div>
+    <div class="rec-body" style="color:#1a5c2a"><strong>v0.2:</strong> Generate <code>POST_TRANSFORM.md</code> alongside every output.<br><strong>v0.3+:</strong> <code>twintrack adjust</code> — reads files, prompts per touchpoint, patches in-place.</div>
+  </div>
+  <div class="section-title">What a touchpoint comment looks like</div>
+  <div class="mono-block">
+# ── TOUCHPOINT: approved_switch ─────────────────────────<br>
+# BPMN: exclusiveGateway gw_approved<br>
+# ISSUE: switchCaseValue is a stub — wire to your worker output.<br>
+# BPMN condition on "Yes" flow: approved == true<br>
+# ACTION: change inputParameters.switchCaseValue to<br>
+#   ${apply_clinical_admission_criteria.output.approved}<br>
+# POST_TRANSFORM.md: Section 2, item 1
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

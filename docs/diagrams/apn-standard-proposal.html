@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APN — Agent Process Notation: Standard Proposal</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: #1a1a1a; padding: 24px; font-size: 12px; max-width: 960px; margin: 0 auto; }
+.tabs { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
+.tab { padding: 5px 11px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1.5px solid #d0d0d0; background: #f5f5f5; color: #555; }
+.tab.active { background: #1a1a2e; border-color: #1a1a2e; color: #fff; }
+.panel { display: none; }
+.panel.active { display: block; }
+.section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #555; margin-bottom: 10px; margin-top: 16px; padding-bottom: 4px; border-bottom: 1.5px solid #e0e0e0; }
+.section-title:first-of-type { margin-top: 0; }
+code { background: rgba(0,0,0,0.07); padding: 0 4px; border-radius: 3px; font-family: 'SF Mono', monospace; font-size: 10px; }
+
+/* LANDSCAPE */
+.landscape { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.lcard { border-radius: 6px; border: 1.5px solid #d8d8d8; overflow: hidden; }
+.lcard-header { padding: 7px 10px; font-size: 11px; font-weight: 700; }
+.lcard-body { padding: 8px 10px; font-size: 11px; line-height: 1.5; color: #444; }
+.lcard-body li { margin-left: 14px; margin-bottom: 3px; }
+.lcard.legacy .lcard-header    { background: #fef3e2; color: #7a4200; }
+.lcard.ai-tools .lcard-header  { background: #e8f0fe; color: #1a3a8f; }
+.lcard.gap .lcard-header       { background: #fce8e6; color: #8a1a12; }
+.gap-box { border-radius: 6px; border: 2px solid #ea4335; background: #fce8e6; padding: 10px 14px; margin-top: 10px; }
+.gap-box .gap-title { font-size: 12px; font-weight: 700; color: #8a1a12; margin-bottom: 4px; }
+.gap-box .gap-body  { font-size: 11px; color: #8a1a12; line-height: 1.5; }
+
+/* NODE PALETTE */
+.palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.node-card { border-radius: 6px; padding: 8px 10px; border: 1.5px solid; }
+.node-name { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
+.node-desc { font-size: 10px; line-height: 1.4; }
+.node-xml  { font-size: 9px; font-family: 'SF Mono',monospace; margin-top: 4px; opacity: 0.7; }
+.n-agent   { border-color: #4285f4; background: #e8f0fe; color: #1a3a8f; }
+.n-rag     { border-color: #9c27b0; background: #f3e8fd; color: #4a0072; }
+.n-mcp     { border-color: #00897b; background: #e0f2f1; color: #004d40; }
+.n-human   { border-color: #fb8c00; background: #fff3e0; color: #7a3e00; }
+.n-handoff { border-color: #e91e63; background: #fce4ec; color: #7a0030; }
+.n-memory  { border-color: #546e7a; background: #eceff1; color: #263238; }
+.n-vector  { border-color: #8d6e63; background: #efebe9; color: #3e2723; }
+.n-observe { border-color: #43a047; background: #e8f5e9; color: #1b5e20; }
+.gate-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-top: 8px; }
+.gate-card { border-radius: 6px; padding: 8px 10px; border: 1.5px solid; }
+.gate-name { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+.gate-desc { font-size: 10px; line-height: 1.4; }
+.g-conf   { border-color: #f4511e; background: #fbe9e7; color: #6d1a09; }
+.g-reason { border-color: #7b1fa2; background: #f3e5f5; color: #4a0072; }
+.g-model  { border-color: #0277bd; background: #e1f5fe; color: #01294b; }
+.g-vector { border-color: #558b2f; background: #f1f8e9; color: #1b4d10; }
+.g-mcp    { border-color: #00838f; background: #e0f7fa; color: #004d55; }
+.g-escape { border-color: #c62828; background: #ffebee; color: #7a0000; }
+
+/* STRATEGY */
+.strategy { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.scol { border-radius: 6px; border: 1.5px solid #d8d8d8; overflow: hidden; }
+.scol-h { padding: 7px 10px; font-size: 11px; font-weight: 700; }
+.scol-b { padding: 8px 10px; font-size: 11px; line-height: 1.6; }
+.col-ext .scol-h { background: #fef3e2; color: #7a4200; }
+.col-new .scol-h { background: #e6f4ea; color: #1a5c2a; }
+.verdict { border-radius: 6px; border: 2px solid #34a853; background: #e6f4ea; padding: 10px 14px; margin-top: 10px; }
+.verdict-title { font-size: 12px; font-weight: 700; color: #1a5c2a; margin-bottom: 5px; }
+.verdict-body  { font-size: 11px; color: #1a5c2a; line-height: 1.6; }
+
+/* SERIALISATION */
+.yaml-block { background: #f5f5f5; border-radius: 6px; border: 1.5px solid #e0e0e0; padding: 10px 12px; font-family: 'SF Mono', monospace; font-size: 10px; line-height: 1.7; margin-top: 10px; }
+.y-key  { color: #1a3a8f; }
+.y-val  { color: #1a5c2a; }
+.y-cmt  { color: #888; }
+.y-type { color: #7a0072; font-weight: 700; }
+
+/* ROADMAP */
+.rmap { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.rphase { border-radius: 6px; border: 1.5px solid #d8d8d8; overflow: hidden; }
+.rphase-h { padding: 7px 10px; font-size: 11px; font-weight: 700; }
+.rphase-b { padding: 8px 10px; font-size: 11px; }
+.rphase-b li { margin-left: 14px; margin-bottom: 3px; line-height: 1.4; color: #444; }
+.r1 .rphase-h { background: #e8f0fe; color: #1a3a8f; }
+.r2 .rphase-h { background: #e6f4ea; color: #1a5c2a; }
+.r3 .rphase-h { background: #f3e8fd; color: #4a0072; }
+.badge { display:inline-block; padding:1px 6px; border-radius:3px; font-size:10px; font-weight:600; }
+.b1 { background:#e8f0fe; color:#1a3a8f; }
+.b2 { background:#e6f4ea; color:#1a5c2a; }
+.b3 { background:#f3e8fd; color:#4a0072; }
+</style>
+</head>
+<body>
+<div class="tabs">
+  <div class="tab active" onclick="show('landscape')">1 — Landscape</div>
+  <div class="tab" onclick="show('nodes')">2 — New Node Types</div>
+  <div class="tab" onclick="show('strategy')">3 — Extension vs New</div>
+  <div class="tab" onclick="show('serialise')">4 — What It Looks Like</div>
+  <div class="tab" onclick="show('roadmap')">5 — Roadmap to Standard</div>
+</div>
+
+<!-- PANEL 1 -->
+<div class="panel active" id="panel-landscape">
+  <div class="section-title">Existing alternatives — why none fill the gap</div>
+  <div class="landscape">
+    <div class="lcard legacy">
+      <div class="lcard-header">Process / Decision Standards</div>
+      <div class="lcard-body"><ul>
+        <li><b>BPMN 2.0</b> — deterministic, no AI concepts</li>
+        <li><b>CMMN</b> — adaptive cases, but no agents</li>
+        <li><b>DMN</b> — decision tables, not LLM-aware</li>
+        <li><b>BPEL</b> — XML orchestration, pre-AI era</li>
+        <li><b>UML Activity</b> — too technical, no semantics</li>
+        <li><b>Petri Nets</b> — academic, not business-readable</li>
+      </ul></div>
+    </div>
+    <div class="lcard ai-tools">
+      <div class="lcard-header">AI Orchestration Tools (proprietary)</div>
+      <div class="lcard-body"><ul>
+        <li><b>LangGraph</b> — code-first, Python only</li>
+        <li><b>CrewAI</b> — role-based, no visual notation</li>
+        <li><b>AutoGen</b> — conversation-based, MS-specific</li>
+        <li><b>Dify / Flowise</b> — visual but proprietary</li>
+        <li><b>AWS Step Functions</b> — AWS-locked JSON</li>
+        <li><b>Bedrock Flows</b> — AWS-only, limited</li>
+        <li><b>Vertex AI Pipelines</b> — ML only, not business</li>
+      </ul></div>
+    </div>
+    <div class="lcard gap">
+      <div class="lcard-header">What's missing in ALL of them</div>
+      <div class="lcard-body"><ul>
+        <li>No open, portable notation standard</li>
+        <li>No business-analyst-readable visual spec</li>
+        <li>No first-class: agents, RAG, MCP, confidence</li>
+        <li>No probabilistic routing (confidence gates)</li>
+        <li>None compile to multiple targets</li>
+        <li>No standard for multi-agent handoffs</li>
+        <li>None bridge BA ↔ engineer in one diagram</li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="gap-box">
+    <div class="gap-title">The gap is real and unoccupied</div>
+    <div class="gap-body">There is no open, vendor-neutral, visual notation standard for designing AI agent workflows that both business analysts and engineers can use. The market gap is: <strong>BPMN's accessibility + AI-native semantics + open standard + multi-target compilation.</strong></div>
+  </div>
+</div>
+
+<!-- PANEL 2 -->
+<div class="panel" id="panel-nodes">
+  <div class="section-title">New task node types — first-class AI citizens</div>
+  <div class="palette">
+    <div class="node-card n-agent">
+      <div class="node-name">🤖 agentTask</div>
+      <div class="node-desc">LLM-driven task. Attrs: model, system_prompt, temperature, tools[]</div>
+      <div class="node-xml">&lt;apn:agentTask model="gemini-2.0-flash"&gt;</div>
+    </div>
+    <div class="node-card n-rag">
+      <div class="node-name">📚 ragTask</div>
+      <div class="node-desc">Retrieval-augmented generation. Attrs: vector_store, top_k, similarity_threshold</div>
+      <div class="node-xml">&lt;apn:ragTask store="patient_docs"&gt;</div>
+    </div>
+    <div class="node-card n-mcp">
+      <div class="node-name">🔌 mcpToolTask</div>
+      <div class="node-desc">Invoke a specific MCP server tool. Attrs: server, tool_name, input_schema</div>
+      <div class="node-xml">&lt;apn:mcpToolTask server="fs" tool="read"&gt;</div>
+    </div>
+    <div class="node-card n-human">
+      <div class="node-name">👤 humanInLoopTask</div>
+      <div class="node-desc">Agent proposes, human approves. Attrs: confidence_threshold, timeout, escalate_to</div>
+      <div class="node-xml">&lt;apn:humanInLoopTask threshold="0.9"&gt;</div>
+    </div>
+    <div class="node-card n-handoff">
+      <div class="node-name">↗ agentHandoff</div>
+      <div class="node-desc">Delegate to specialist agent. Multi-agent orchestration. Attrs: target_agent, context</div>
+      <div class="node-xml">&lt;apn:agentHandoff target="billing_agent"&gt;</div>
+    </div>
+    <div class="node-card n-memory">
+      <div class="node-name">🧠 memoryTask</div>
+      <div class="node-desc">Read/write agent memory (session, long-term). Attrs: store, operation, key</div>
+      <div class="node-xml">&lt;apn:memoryTask op="write" store="session"&gt;</div>
+    </div>
+    <div class="node-card n-vector">
+      <div class="node-name">⬡ vectorTask</div>
+      <div class="node-desc">Embed content into / query vector store. Attrs: store, operation, model</div>
+      <div class="node-xml">&lt;apn:vectorTask op="embed" store="kb"&gt;</div>
+    </div>
+    <div class="node-card n-observe">
+      <div class="node-name">📡 observeEvent</div>
+      <div class="node-desc">Emit LLM trace/span to observability platform (LangFuse, Phoenix, OTEL)</div>
+      <div class="node-xml">&lt;apn:observeEvent platform="langfuse"&gt;</div>
+    </div>
+  </div>
+  <div class="section-title" style="margin-top:14px">New gate types — probabilistic and AI-native routing</div>
+  <div class="gate-row">
+    <div class="gate-card g-conf">
+      <div class="gate-name">◇ confidenceGate</div>
+      <div class="gate-desc">Routes based on agent confidence score (0.0–1.0). High → proceed. Medium → human review. Low → retry or escalate. <strong>Replaces binary exclusiveGateway.</strong></div>
+    </div>
+    <div class="gate-card g-reason">
+      <div class="gate-name">◇ reasoningGate</div>
+      <div class="gate-desc">Routes by parsing LLM chain-of-thought output. The model's own reasoning determines the path — no hard-coded condition needed.</div>
+    </div>
+    <div class="gate-card g-model">
+      <div class="gate-name">◇ modelVersionGate</div>
+      <div class="gate-desc">A/B or canary route between model versions. Traffic split by percentage. Ideal for safe model upgrades.</div>
+    </div>
+    <div class="gate-card g-vector">
+      <div class="gate-name">◇ semanticGate</div>
+      <div class="gate-desc">Routes by vector similarity — input is embedded and matched against intent clusters. Most semantically similar branch is taken.</div>
+    </div>
+    <div class="gate-card g-mcp">
+      <div class="gate-name">◇ mcpGate</div>
+      <div class="gate-desc">Calls an MCP tool and routes on result. E.g. compliance-check MCP → pass/fail/review. First-class MCP in the flow.</div>
+    </div>
+    <div class="gate-card g-escape">
+      <div class="gate-name">◇ escapeGate</div>
+      <div class="gate-desc">Auto-escalation. If any upstream agent fails, times out, or hits a confidence floor — route to human or fallback agent.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 3 -->
+<div class="panel" id="panel-strategy">
+  <div class="section-title">Extension of BPMN 2.0 vs a new notation</div>
+  <div class="strategy">
+    <div class="scol col-ext">
+      <div class="scol-h">Option A — Extend BPMN 2.0</div>
+      <div class="scol-b">
+        Use <code>&lt;bpmn:extensionElements&gt;</code> with a custom <code>apn:</code> namespace.<br><br>
+        <b>Pro:</b> Backward-compatible. Huge existing BPMN tooling ecosystem.<br>
+        <b>Pro:</b> Business analysts already know BPMN shapes.<br><br>
+        <b>Con:</b> Constrained by BPMN's deterministic mental model.<br>
+        <b>Con:</b> Can't add genuinely new gate shapes without forking BPMN.io.<br>
+        <b>Con:</b> You'll always be "BPMN with extensions", not a distinct standard.
+      </div>
+    </div>
+    <div class="scol col-new">
+      <div class="scol-h">Option B — New notation: APN</div>
+      <div class="scol-b">
+        Agent Process Notation — new open standard. YAML serialisation. Visual spec. Apache 2.0. TwinTrack is the reference compiler.<br><br>
+        <b>Pro:</b> Own the standard, not an extension of someone else's.<br>
+        <b>Pro:</b> Design the right mental model (probabilistic, not deterministic).<br>
+        <b>Pro:</b> First mover — no competitor exists today.<br><br>
+        <b>Con:</b> New visual language = learning curve for BAs.<br>
+        <b>Con:</b> Need to build or fork modeller.<br>
+        <b>Con:</b> Harder to get enterprise adoption without existing tooling.
+      </div>
+    </div>
+  </div>
+  <div class="verdict">
+    <div class="verdict-title">Recommendation — Hybrid: APN as a superset of BPMN 2.0</div>
+    <div class="verdict-body">
+      <b>Start with BPMN 2.0 as the base serialisation.</b> Every APN diagram IS a valid BPMN 2.0 file. APN-specific nodes use extension elements. The APN spec defines the extensions formally (XSD + visual spec).<br><br>
+      Publish at <code>spec.agentprocessnotation.org</code> under Apache 2.0. TwinTrack is the reference parser and compiler. <strong>APN is the source language. TwinTrack is the compiler.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL 4 -->
+<div class="panel" id="panel-serialise">
+  <div class="section-title">What an APN file looks like — patient admission example</div>
+  <div class="yaml-block">
+<span class="y-cmt"># APN — Agent Process Notation v0.1</span><br>
+<span class="y-cmt"># xmlns:apn="http://spec.agentprocessnotation.org/ns/1.0"</span><br><br>
+<span class="y-key">process</span>:<br>
+&nbsp;&nbsp;<span class="y-key">id</span>: <span class="y-val">patient_preadmission</span><br>
+&nbsp;&nbsp;<span class="y-key">name</span>: <span class="y-val">Patient Preadmission</span><br>
+&nbsp;&nbsp;<span class="y-key">targets</span>: <span class="y-val">[orkes, google_adk, langraph]</span><br><br>
+<span class="y-key">nodes</span>:<br>
+&nbsp;&nbsp;- <span class="y-key">id</span>: <span class="y-val">verify_insurance</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">type</span>: <span class="y-type">agentTask</span>  <span class="y-cmt"># NEW — first-class agent</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">model</span>: <span class="y-val">gemini-2.0-flash</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">tools</span>: <span class="y-val">[mcp://insurance-api, mcp://medicare-lookup]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">confidence_threshold</span>: <span class="y-val">0.95</span><br><br>
+&nbsp;&nbsp;- <span class="y-key">id</span>: <span class="y-val">gw_confidence</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">type</span>: <span class="y-type">confidenceGate</span>  <span class="y-cmt"># NEW — probabilistic routing</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">source</span>: <span class="y-val">verify_insurance.confidence</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">routes</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">high</span>:   <span class="y-val">"&gt;= 0.95 → proceed"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">medium</span>: <span class="y-val">"0.7–0.95 → human_review"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">low</span>:    <span class="y-val">"&lt; 0.7 → escalate"</span><br><br>
+&nbsp;&nbsp;- <span class="y-key">id</span>: <span class="y-val">notify_compliance</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">type</span>: <span class="y-type">mcpToolTask</span>  <span class="y-cmt"># NEW — MCP as first-class node</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">server</span>: <span class="y-val">mcp://compliance-checker.kshetra.studio</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="y-key">tool</span>: <span class="y-val">check_hipaa_consent</span>
+  </div>
+</div>
+
+<!-- PANEL 5 -->
+<div class="panel" id="panel-roadmap">
+  <div class="section-title">Road to becoming an open standard</div>
+  <div class="rmap">
+    <div class="rphase r1">
+      <div class="rphase-h"><span class="badge b1">Phase 1 — Now</span> APN in TwinTrack</div>
+      <div class="rphase-b"><ul>
+        <li>APN YAML schema v0.1 published</li>
+        <li>TwinTrack reads APN YAML natively</li>
+        <li>BPMN 2.0 + <code>apn:</code> extensions as alt input</li>
+        <li>Apache 2.0, GitHub: kshetra-studio/apn-spec</li>
+        <li>New node types: agentTask, ragTask, mcpToolTask, confidenceGate</li>
+      </ul></div>
+    </div>
+    <div class="rphase r2">
+      <div class="rphase-h"><span class="badge b2">Phase 2 — v1.0</span> Tooling + Community</div>
+      <div class="rphase-b"><ul>
+        <li>Visual spec — shape library for each node type</li>
+        <li>BPMN.io plugin to render APN nodes</li>
+        <li>VS Code extension — APN language support</li>
+        <li>APN Playground — paste YAML, see diagram</li>
+        <li>Submit to Orkes, Google as adopting parties</li>
+      </ul></div>
+    </div>
+    <div class="rphase r3">
+      <div class="rphase-h"><span class="badge b3">Phase 3 — v2.0</span> Standard + Ecosystem</div>
+      <div class="rphase-b"><ul>
+        <li>Submit APN to OMG as BPMN 3.0 input</li>
+        <li>Partner with Camunda / Flowable communities</li>
+        <li>APN Working Group — open governance</li>
+        <li>Certification: "APN-compatible" badge</li>
+        <li>Multiple reference implementations (JS, Java, Go)</li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="verdict" style="margin-top:10px">
+    <div class="verdict-title">Strategic position</div>
+    <div class="verdict-body">TwinTrack is the <b>compiler</b>. APN is the <b>source language</b>. Just as TypeScript compiles to JavaScript for multiple targets, APN compiles to Orkes, Google ADK, LangGraph, AWS Bedrock. The standard lives independently of any runtime vendor — that is the moat.</div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

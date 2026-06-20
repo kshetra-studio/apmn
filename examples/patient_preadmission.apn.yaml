@@ -1,0 +1,221 @@
+# APN v0.1 — Patient Preadmission
+# Reference example demonstrating all major APN node types.
+# Compile with TwinTrack: twintrack generate --apn patient_preadmission.apn.yaml
+
+apn_version: "0.1"
+xmlns_apn: "http://spec.agentprocessnotation.org/ns/1.0"
+
+process:
+  id: patient_preadmission
+  name: Patient Preadmission
+  description: >
+    Healthcare preadmission workflow for Ramsay private hospitals.
+    Demonstrates agentTask, ragTask, mcpToolTask, confidenceGate,
+    humanInLoopTask, parallelGateway, observeEvent, and escapeGate.
+  targets: [orkes, google_adk]
+
+pools:
+  - id: pool_ai
+    name: AI Processing
+    type: agent
+  - id: pool_human
+    name: Clinical Staff
+    type: human
+
+nodes:
+  # ── START ──────────────────────────────────────────────────────────────
+  - id: start_1
+    type: startEvent
+    name: Patient submits request
+
+  # ── COLLECT DEMOGRAPHICS (agentic — conversational intake) ────────────
+  - id: task_collect_demographics
+    type: agentTask
+    name: Collect patient demographics
+    model: gemini-2.0-flash
+    system_prompt: >
+      Collect patient name, DOB, Medicare number, private health fund details,
+      contact information, and next of kin. Be conversational and concise.
+    pool_id: pool_ai
+    documentation: "Conversational intake agent — replaces paper form"
+
+  # ── POLICY RAG CHECK ──────────────────────────────────────────────────
+  - id: task_check_policy
+    type: ragTask
+    name: Check admission policy
+    vector_store: hospital_policy_kb
+    query_from: task_collect_demographics.output
+    top_k: 5
+    similarity_threshold: 0.75
+    pool_id: pool_ai
+    documentation: "Retrieve relevant admission policy sections for this patient profile"
+
+  # ── INSURANCE VERIFICATION (MCP tool) ────────────────────────────────
+  - id: task_verify_insurance
+    type: mcpToolTask
+    name: Verify insurance via MCP
+    server: mcp://insurance-api.ramsay.internal
+    tool: verify_coverage
+    pool_id: pool_ai
+    documentation: "Call insurance API via MCP to confirm coverage and benefit limits"
+
+  # ── COMPLIANCE CHECK (MCP gate) ───────────────────────────────────────
+  - id: gw_compliance
+    type: mcpGate
+    name: HIPAA / Privacy Act check
+    server: mcp://compliance-checker.kshetra.studio
+    tool: check_consent
+    routes:
+      - result_match: "pass"
+        target: task_apply_criteria
+      - result_match: "review"
+        target: task_manual_consent
+    default: end_rejected
+
+  # ── MANUAL CONSENT (human) ────────────────────────────────────────────
+  - id: task_manual_consent
+    type: humanInLoopTask
+    name: Obtain manual consent
+    timeout: PT4H
+    escalate_to: end_rejected
+    pool_id: pool_human
+    documentation: "Compliance flag — clinician must obtain explicit consent before proceeding"
+
+  # ── CLINICAL CRITERIA (agentic business rule) ─────────────────────────
+  - id: task_apply_criteria
+    type: agentTask
+    name: Apply clinical admission criteria
+    model: gemini-2.0-flash
+    system_prompt: >
+      Apply the retrieved hospital admission criteria to this patient profile.
+      Return: approved (bool), confidence (float 0-1), reasoning (string),
+      and any risk flags.
+    confidence_threshold: 0.85
+    pool_id: pool_ai
+    documentation: "Criteria agent — structured JSON output drives confidence gate below"
+
+  # ── CONFIDENCE GATE (APN-native routing) ──────────────────────────────
+  - id: gw_confidence
+    type: confidenceGate
+    name: Admission decision confidence
+    source: task_apply_criteria.confidence
+    routes:
+      high:   ">= 0.85 → gw_split"
+      medium: "0.6–0.85 → task_clinical_risk"
+      low:    "< 0.6 → end_rejected"
+
+  # ── CLINICAL RISK (human — cannot be automated) ───────────────────────
+  - id: task_clinical_risk
+    type: humanInLoopTask
+    name: Clinical risk assessment
+    timeout: PT8H
+    escalate_to: end_rejected
+    pool_id: pool_human
+    documentation: >
+      Clinician reviews patient risk factors, comorbidities, and documents
+      assessment. Required when AI confidence is medium.
+
+  # ── PARALLEL SPLIT ────────────────────────────────────────────────────
+  - id: gw_split
+    type: parallelGateway
+    name: Split — docs and notify
+
+  # ── GENERATE DOCS (agentic) ───────────────────────────────────────────
+  - id: task_generate_docs
+    type: agentTask
+    name: Generate admission documents
+    model: gemini-2.0-flash
+    system_prompt: >
+      Generate admission paperwork, consent forms, and patient care plan
+      using the collected demographics and clinical assessment.
+    tools: [mcp://doc-templates.ramsay.internal]
+    pool_id: pool_ai
+
+  # ── NOTIFY CARE TEAM (MCP tool) ───────────────────────────────────────
+  - id: task_notify_care_team
+    type: mcpToolTask
+    name: Notify care team
+    server: mcp://messaging.ramsay.internal
+    tool: send_admission_alert
+    pool_id: pool_ai
+
+  # ── PARALLEL JOIN ─────────────────────────────────────────────────────
+  - id: gw_join
+    type: parallelGateway
+    name: Join
+
+  # ── APPLY WRISTBAND (physical — human only) ───────────────────────────
+  - id: task_apply_wristband
+    type: manualTask
+    name: Apply patient wristband
+    pool_id: pool_human
+    documentation: "Physical action — apply ID wristband on patient arrival"
+
+  # ── STORE TO MEMORY (patient context for future agent calls) ──────────
+  - id: task_save_memory
+    type: memoryTask
+    name: Save admission context
+    store: long_term
+    operation: write
+    key: "patient.${patient_id}.admission"
+    value_from: task_apply_criteria.output
+    pool_id: pool_ai
+
+  # ── WAIT FOR ARRIVAL (timer) ──────────────────────────────────────────
+  - id: event_wait_arrival
+    type: timerEvent
+    name: Wait 2 hours for arrival
+    duration: PT2H
+
+  # ── OBSERVABILITY ─────────────────────────────────────────────────────
+  - id: observe_completion
+    type: observeEvent
+    name: Log admission trace
+    platform: langfuse
+    trace_name: patient_preadmission
+    attributes:
+      patient_id: "${patient_id}"
+      outcome: "admitted"
+
+  # ── ESCAPE GATE (safety net) ──────────────────────────────────────────
+  - id: gw_escape
+    type: escapeGate
+    name: Escalation safety net
+    watches: [task_apply_criteria, task_verify_insurance, task_check_policy]
+    confidence_floor: 0.5
+    triggers:
+      on_failure:        task_clinical_risk
+      on_timeout:        task_clinical_risk
+      on_low_confidence: task_clinical_risk
+
+  # ── END STATES ────────────────────────────────────────────────────────
+  - id: end_admitted
+    type: endEvent
+    name: Admission complete
+
+  - id: end_rejected
+    type: endEvent
+    name: Admission rejected
+
+flows:
+  - { id: f1,  source: start_1,               target: task_collect_demographics }
+  - { id: f2,  source: task_collect_demographics, target: task_check_policy }
+  - { id: f3,  source: task_check_policy,     target: task_verify_insurance }
+  - { id: f4,  source: task_verify_insurance, target: gw_compliance }
+  - { id: f5,  source: gw_compliance,         target: task_apply_criteria, name: "pass" }
+  - { id: f6,  source: gw_compliance,         target: task_manual_consent, name: "review" }
+  - { id: f7,  source: task_manual_consent,   target: task_apply_criteria }
+  - { id: f8,  source: task_apply_criteria,   target: gw_confidence }
+  - { id: f9,  source: gw_confidence,         target: gw_split,           name: "high" }
+  - { id: f10, source: gw_confidence,         target: task_clinical_risk, name: "medium" }
+  - { id: f11, source: gw_confidence,         target: end_rejected,       name: "low" }
+  - { id: f12, source: task_clinical_risk,    target: gw_split }
+  - { id: f13, source: gw_split,              target: task_generate_docs }
+  - { id: f14, source: gw_split,              target: task_notify_care_team }
+  - { id: f15, source: task_generate_docs,    target: gw_join }
+  - { id: f16, source: task_notify_care_team, target: gw_join }
+  - { id: f17, source: gw_join,               target: task_apply_wristband }
+  - { id: f18, source: task_apply_wristband,  target: task_save_memory }
+  - { id: f19, source: task_save_memory,      target: event_wait_arrival }
+  - { id: f20, source: event_wait_arrival,    target: observe_completion }
+  - { id: f21, source: observe_completion,    target: end_admitted }

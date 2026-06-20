@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  APN Extension Schema — v0.1
+  XML Schema for apn: extension elements inside BPMN 2.0 extensionElements.
+  Namespace: http://spec.agentprocessnotation.org/ns/1.0
+-->
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:apn="http://spec.agentprocessnotation.org/ns/1.0"
+  targetNamespace="http://spec.agentprocessnotation.org/ns/1.0"
+  elementFormDefault="qualified">
+
+  <!-- ── TASK EXTENSIONS ─────────────────────────────────────────────── -->
+
+  <xs:element name="agentTask">
+    <xs:complexType>
+      <xs:attribute name="model"                 type="xs:string"  use="required"/>
+      <xs:attribute name="system_prompt"         type="xs:string"/>
+      <xs:attribute name="temperature"           type="xs:decimal"/>
+      <xs:attribute name="max_tokens"            type="xs:integer"/>
+      <xs:attribute name="confidence_threshold"  type="xs:decimal"/>
+      <xs:attribute name="tools"                 type="xs:string"
+                    use="optional" default=""
+                    apn:description="Comma-separated MCP tool URIs or named tool references"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ragTask">
+    <xs:complexType>
+      <xs:attribute name="vector_store"          type="xs:string"  use="required"/>
+      <xs:attribute name="query_from"            type="xs:string"  use="required"/>
+      <xs:attribute name="top_k"                 type="xs:integer" default="5"/>
+      <xs:attribute name="similarity_threshold"  type="xs:decimal" default="0.7"/>
+      <xs:attribute name="model"                 type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="mcpToolTask">
+    <xs:complexType>
+      <xs:attribute name="server"  type="xs:anyURI" use="required"/>
+      <xs:attribute name="tool"    type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="humanInLoopTask">
+    <xs:complexType>
+      <xs:attribute name="confidence_threshold"  type="xs:decimal"/>
+      <xs:attribute name="timeout"               type="xs:string"
+                    apn:description="ISO 8601 duration e.g. PT4H"/>
+      <xs:attribute name="escalate_to"           type="xs:string"
+                    apn:description="Node ID to route to on timeout"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="agentHandoff">
+    <xs:complexType>
+      <xs:attribute name="target_agent"    type="xs:string" use="required"/>
+      <xs:attribute name="context_fields"  type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="memoryTask">
+    <xs:complexType>
+      <xs:attribute name="store"      type="xs:string" use="required"/>
+      <xs:attribute name="operation"  use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="read"/>
+            <xs:enumeration value="write"/>
+            <xs:enumeration value="append"/>
+            <xs:enumeration value="delete"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="key"        type="xs:string" use="required"/>
+      <xs:attribute name="value_from" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="vectorTask">
+    <xs:complexType>
+      <xs:attribute name="store"            type="xs:string" use="required"/>
+      <xs:attribute name="operation"        use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="embed"/>
+            <xs:enumeration value="query"/>
+            <xs:enumeration value="delete"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="embedding_model"  type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="observeEvent">
+    <xs:complexType>
+      <xs:attribute name="platform"    use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="langfuse"/>
+            <xs:enumeration value="phoenix"/>
+            <xs:enumeration value="otel"/>
+            <xs:enumeration value="datadog"/>
+            <xs:enumeration value="custom"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="trace_name"  type="xs:string"/>
+      <xs:attribute name="span_name"   type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ── GATE EXTENSIONS ─────────────────────────────────────────────── -->
+
+  <xs:element name="confidenceGate">
+    <xs:complexType>
+      <xs:attribute name="source"          type="xs:string" use="required"
+                    apn:description="e.g. taskId.confidence"/>
+      <xs:attribute name="route_high"      type="xs:string"/>
+      <xs:attribute name="route_medium"    type="xs:string"/>
+      <xs:attribute name="route_low"       type="xs:string"/>
+      <xs:attribute name="route_default"   type="xs:string"/>
+      <xs:attribute name="threshold_high"  type="xs:decimal" default="0.85"/>
+      <xs:attribute name="threshold_low"   type="xs:decimal" default="0.6"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="reasoningGate">
+    <xs:complexType>
+      <xs:attribute name="source"   type="xs:string" use="required"
+                    apn:description="e.g. taskId.reasoning"/>
+      <xs:attribute name="default"  type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="modelVersionGate">
+    <xs:complexType>
+      <xs:attribute name="strategy" default="weighted_random">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="weighted_random"/>
+            <xs:enumeration value="round_robin"/>
+            <xs:enumeration value="latency_based"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="semanticGate">
+    <xs:complexType>
+      <xs:attribute name="embedding_model"  type="xs:string"/>
+      <xs:attribute name="default"          type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="mcpGate">
+    <xs:complexType>
+      <xs:attribute name="server"   type="xs:anyURI" use="required"/>
+      <xs:attribute name="tool"     type="xs:string" use="required"/>
+      <xs:attribute name="default"  type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="escapeGate">
+    <xs:complexType>
+      <xs:attribute name="watches"              type="xs:string" use="required"
+                    apn:description="Comma-separated node IDs to monitor"/>
+      <xs:attribute name="confidence_floor"     type="xs:decimal" default="0.5"/>
+      <xs:attribute name="on_failure"           type="xs:string"/>
+      <xs:attribute name="on_timeout"           type="xs:string"/>
+      <xs:attribute name="on_low_confidence"    type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

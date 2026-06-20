@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TwinTrack Architecture — v0.1</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: #1a1a1a; padding: 24px; font-size: 12px; max-width: 900px; margin: 0 auto; }
+.title { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #555; margin-bottom: 18px; }
+.layer { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+.layer-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 2px; padding-left: 2px; }
+.row { display: flex; align-items: center; gap: 8px; }
+.box { border-radius: 6px; padding: 8px 12px; font-size: 12px; font-weight: 500; display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.box .sub { font-size: 10px; font-weight: 400; opacity: 0.7; }
+.box-input  { background: #f0f0f0; border: 1.5px solid #d0d0d0; }
+.box-core   { background: #e8f0fe; border: 1.5px solid #4285f4; color: #1a3a8f; }
+.box-graph  { background: #e6f4ea; border: 1.5px solid #34a853; color: #1a5c2a; }
+.box-gen    { background: #fce8e6; border: 1.5px solid #ea4335; color: #8a1a12; }
+.box-output { background: #fef9e7; border: 1.5px solid #fbbc04; color: #5a4200; }
+.box-config { background: #f3e8fd; border: 1.5px solid #9c27b0; color: #4a0072; }
+.arr { font-size: 14px; color: #888; flex-shrink: 0; line-height: 1; }
+.arr-down { text-align: center; color: #888; font-size: 14px; margin: 2px 0; padding-left: 20px; }
+.split-row { display: flex; gap: 8px; }
+.split-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.split-arr { font-size: 12px; color: #888; }
+.node-table { margin-top: 16px; border-radius: 6px; overflow: hidden; border: 1.5px solid #d8d8d8; }
+.node-table-title { background: #f0f0f0; padding: 6px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #555; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+th { background: #f5f5f5; padding: 5px 8px; text-align: left; font-weight: 600; color: #555; border-bottom: 1px solid #e0e0e0; }
+td { padding: 5px 8px; border-bottom: 1px solid #efefef; }
+tr:last-child td { border-bottom: none; }
+.badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+.badge-auto  { background: #e8f0fe; color: #1a3a8f; }
+.badge-opt   { background: #f3e8fd; color: #4a0072; }
+.badge-human { background: #fce8e6; color: #8a1a12; }
+.badge-struct { background: #f0f0f0; color: #555; }
+.env-row { display: flex; gap: 8px; margin-top: 16px; }
+.env-box { flex: 1; border-radius: 6px; border: 1.5px solid #d0d0d0; overflow: hidden; }
+.env-header { padding: 6px 10px; font-size: 11px; font-weight: 700; }
+.env-body { padding: 6px 10px; font-size: 11px; }
+.env-body div { margin: 2px 0; color: #555; }
+.env-stage .env-header { background: #e6f4ea; color: #1a5c2a; }
+.env-prod  .env-header { background: #e8f0fe; color: #1a3a8f; }
+.footer { margin-top: 14px; font-size: 10px; color: #888; }
+</style>
+</head>
+<body>
+<div class="title">TwinTrack — Architecture v0.1</div>
+<div class="layer">
+  <div class="layer-label">Inputs</div>
+  <div class="row">
+    <div class="box box-input">BPMN 2.0 XML<span class="sub">examples/*.bpmn</span></div>
+    <div class="arr">+</div>
+    <div class="box box-config">YAML Executor Config<span class="sub">examples/*.yaml</span></div>
+  </div>
+</div>
+<div class="arr-down">↓</div>
+<div class="layer">
+  <div class="layer-label">Parse</div>
+  <div class="row">
+    <div class="box box-core">parser.py<span class="sub">lxml · namespace-agnostic</span></div>
+    <div class="arr">→</div>
+    <div class="box box-core">BPMNProcess<span class="sub">nodes + flows (dataclasses)</span></div>
+    <div class="arr">+</div>
+    <div class="box box-config">ExecutorConfig<span class="sub">default_manual · task overrides</span></div>
+  </div>
+</div>
+<div class="arr-down">↓</div>
+<div class="layer">
+  <div class="layer-label">Graph</div>
+  <div class="row">
+    <div class="box box-graph">graph.py — FlowGraph<span class="sub">outgoing/incoming adjacency · find_convergence() for FORK_JOIN &amp; SWITCH</span></div>
+  </div>
+</div>
+<div class="arr-down">↓  (split)</div>
+<div class="split-row">
+  <div class="split-col">
+    <div class="box box-gen" style="width:100%">generators/orkes.py<span class="sub">Recursive descent traversal</span></div>
+    <div class="split-arr">↓</div>
+    <div class="box box-output" style="width:100%">*_orkes.json<span class="sub">Orkes Conductor workflow</span></div>
+  </div>
+  <div class="split-col">
+    <div class="box box-gen" style="width:100%">generators/google_adk.py<span class="sub">BFS traversal</span></div>
+    <div class="split-arr">↓</div>
+    <div class="box box-output" style="width:100%">*_google_adk.py<span class="sub">Google ADK + Gemini agent</span></div>
+  </div>
+</div>
+<div class="node-table">
+  <div class="node-table-title">Node → Output Mapping</div>
+  <table>
+    <tr><th>BPMN Type</th><th>Class</th><th>Orkes</th><th>Google ADK</th></tr>
+    <tr><td>serviceTask, scriptTask, sendTask</td><td><span class="badge badge-auto">AUTO</span></td><td>SIMPLE</td><td>@tool</td></tr>
+    <tr><td>userTask, manualTask, businessRuleTask</td><td><span class="badge badge-human">HUMAN</span> / <span class="badge badge-opt">AGENT*</span></td><td>HUMAN / SIMPLE*</td><td>comment / @tool*</td></tr>
+    <tr><td>exclusiveGateway</td><td><span class="badge badge-struct">STRUCT</span></td><td>SWITCH</td><td>Gemini routes</td></tr>
+    <tr><td>parallelGateway</td><td><span class="badge badge-struct">STRUCT</span></td><td>FORK_JOIN + JOIN</td><td>parallel tools</td></tr>
+    <tr><td>timerEvent</td><td><span class="badge badge-struct">STRUCT</span></td><td>WAIT</td><td>@tool stub</td></tr>
+  </table>
+</div>
+<div class="env-row">
+  <div class="env-box env-stage">
+    <div class="env-header">Staging (auto-deploy)</div>
+    <div class="env-body">
+      <div>Branch: <strong>staging</strong></div>
+      <div>CI: pytest + mypy</div>
+      <div>Gate: CI pass only</div>
+    </div>
+  </div>
+  <div class="env-box env-prod">
+    <div class="env-header">Production (manual gate)</div>
+    <div class="env-body">
+      <div>Branch: <strong>main</strong></div>
+      <div>Tag: v{MAJOR}.{MINOR}.{PATCH}</div>
+      <div>Gate: PR review + CI pass</div>
+    </div>
+  </div>
+</div>
+<div class="footer">* opt-in via YAML config — executor: AGENT on the task ID</div>
+</body>
+</html>
