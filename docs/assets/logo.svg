@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Hexagon background -->
+  <polygon points="32,4 58,18 58,46 32,60 6,46 6,18" fill="#6d28d9" opacity="0.15"/>
+  <polygon points="32,4 58,18 58,46 32,60 6,46 6,18" fill="none" stroke="#6d28d9" stroke-width="2"/>
+  <!-- Agent node (circle) -->
+  <circle cx="32" cy="22" r="7" fill="#6d28d9"/>
+  <!-- Gateway (diamond) -->
+  <polygon points="32,35 39,42 32,49 25,42" fill="none" stroke="#6d28d9" stroke-width="2"/>
+  <!-- Connecting arrow -->
+  <line x1="32" y1="29" x2="32" y2="35" stroke="#6d28d9" stroke-width="1.5" marker-end="url(#arr)"/>
+  <defs>
+    <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#6d28d9"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,337 @@
+# APMN YAML Schema — v0.1
+# JSON Schema (expressed in YAML) for AI Process Model and Notation documents.
+# $schema: https://json-schema.org/draft/2020-12/schema
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "http://apmn.kshetra.studio/schema/v0.1/apmn-schema.yaml"
+title: "AI Process Model and Notation"
+description: "Schema for APMN YAML documents v0.1"
+type: object
+required: [apmn_version, process, nodes]
+
+properties:
+
+  apmn_version:
+    type: string
+    enum: ["0.1"]
+    description: "APN specification version this document conforms to"
+
+  xmlns_apmn:
+    type: string
+    const: "http://apmn.kshetra.studio/ns/1.0"
+
+  process:
+    type: object
+    required: [id, name]
+    properties:
+      id:          { type: string }
+      name:        { type: string }
+      description: { type: string }
+      targets:
+        type: array
+        items:
+          type: string
+          enum: [orkes, google_adk, langraph, bedrock, all]
+
+  nodes:
+    type: array
+    items:
+      $ref: "#/$defs/Node"
+
+  flows:
+    type: array
+    items:
+      $ref: "#/$defs/Flow"
+
+  pools:
+    type: array
+    items:
+      $ref: "#/$defs/Pool"
+
+$defs:
+
+  # ── FLOW ──────────────────────────────────────────────────────────────
+  Flow:
+    type: object
+    required: [id, source, target]
+    properties:
+      id:        { type: string }
+      source:    { type: string }
+      target:    { type: string }
+      name:      { type: string }
+      condition: { type: string }
+
+  # ── POOL ──────────────────────────────────────────────────────────────
+  Pool:
+    type: object
+    required: [id, name]
+    properties:
+      id:   { type: string }
+      name: { type: string }
+      type:
+        type: string
+        enum: [human, agent, tool, system]
+      lanes:
+        type: array
+        items:
+          type: object
+          required: [id, name]
+          properties:
+            id:       { type: string }
+            name:     { type: string }
+            node_ids: { type: array, items: { type: string } }
+
+  # ── BASE NODE ─────────────────────────────────────────────────────────
+  Node:
+    type: object
+    required: [id, type, name]
+    properties:
+      id:            { type: string }
+      name:          { type: string }
+      documentation: { type: string }
+      pool_id:       { type: string }
+      lane_id:       { type: string }
+    discriminator:
+      propertyName: type
+    oneOf:
+      # ── BPMN 2.0 inherited ──
+      - $ref: "#/$defs/ServiceTaskNode"
+      - $ref: "#/$defs/ScriptTaskNode"
+      - $ref: "#/$defs/UserTaskNode"
+      - $ref: "#/$defs/ManualTaskNode"
+      - $ref: "#/$defs/BusinessRuleTaskNode"
+      - $ref: "#/$defs/SendTaskNode"
+      - $ref: "#/$defs/ReceiveTaskNode"
+      - $ref: "#/$defs/ExclusiveGatewayNode"
+      - $ref: "#/$defs/ParallelGatewayNode"
+      - $ref: "#/$defs/StartEventNode"
+      - $ref: "#/$defs/EndEventNode"
+      - $ref: "#/$defs/TimerEventNode"
+      # ── APN new task types ──
+      - $ref: "#/$defs/AgentTaskNode"
+      - $ref: "#/$defs/RagTaskNode"
+      - $ref: "#/$defs/McpToolTaskNode"
+      - $ref: "#/$defs/HumanInLoopTaskNode"
+      - $ref: "#/$defs/AgentHandoffNode"
+      - $ref: "#/$defs/MemoryTaskNode"
+      - $ref: "#/$defs/VectorTaskNode"
+      - $ref: "#/$defs/ObserveEventNode"
+      # ── APN new gate types ──
+      - $ref: "#/$defs/ConfidenceGateNode"
+      - $ref: "#/$defs/ReasoningGateNode"
+      - $ref: "#/$defs/ModelVersionGateNode"
+      - $ref: "#/$defs/SemanticGateNode"
+      - $ref: "#/$defs/McpGateNode"
+      - $ref: "#/$defs/EscapeGateNode"
+
+  # ── BPMN 2.0 NODES (pass-through) ─────────────────────────────────────
+  ServiceTaskNode:
+    properties:
+      type: { const: serviceTask }
+  ScriptTaskNode:
+    properties:
+      type: { const: scriptTask }
+  UserTaskNode:
+    properties:
+      type: { const: userTask }
+      executor: { type: string, enum: [HUMAN, AGENT] }
+  ManualTaskNode:
+    properties:
+      type: { const: manualTask }
+      executor: { type: string, enum: [HUMAN, AGENT] }
+  BusinessRuleTaskNode:
+    properties:
+      type: { const: businessRuleTask }
+      executor: { type: string, enum: [HUMAN, AGENT] }
+  SendTaskNode:
+    properties:
+      type: { const: sendTask }
+  ReceiveTaskNode:
+    properties:
+      type: { const: receiveTask }
+  ExclusiveGatewayNode:
+    properties:
+      type: { const: exclusiveGateway }
+  ParallelGatewayNode:
+    properties:
+      type: { const: parallelGateway }
+  StartEventNode:
+    properties:
+      type: { const: startEvent }
+  EndEventNode:
+    properties:
+      type: { const: endEvent }
+  TimerEventNode:
+    properties:
+      type: { const: timerEvent }
+      duration: { type: string, description: "ISO 8601 duration e.g. PT2H" }
+
+  # ── APN TASK NODES ────────────────────────────────────────────────────
+  AgentTaskNode:
+    properties:
+      type: { const: agentTask }
+      model:
+        type: string
+        description: "LLM model identifier e.g. gemini-2.0-flash, claude-sonnet-4-6"
+      system_prompt:    { type: string }
+      tools:
+        type: array
+        items: { type: string }
+        description: "MCP tool URIs or named tool references"
+      temperature:
+        type: number
+        minimum: 0.0
+        maximum: 2.0
+        default: 0.0
+      max_tokens:       { type: integer }
+      confidence_threshold:
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+    required: [model]
+
+  RagTaskNode:
+    properties:
+      type: { const: ragTask }
+      vector_store:         { type: string }
+      query_from:           { type: string }
+      top_k:                { type: integer, default: 5 }
+      similarity_threshold: { type: number, minimum: 0.0, maximum: 1.0, default: 0.7 }
+      model:                { type: string }
+    required: [vector_store, query_from]
+
+  McpToolTaskNode:
+    properties:
+      type:         { const: mcpToolTask }
+      server:       { type: string, description: "MCP server URI" }
+      tool:         { type: string }
+      input_schema: { type: object }
+    required: [server, tool]
+
+  HumanInLoopTaskNode:
+    properties:
+      type:                 { const: humanInLoopTask }
+      confidence_threshold: { type: number, minimum: 0.0, maximum: 1.0 }
+      timeout:              { type: string, description: "ISO 8601 duration" }
+      escalate_to:          { type: string, description: "Node ID if timeout exceeded" }
+
+  AgentHandoffNode:
+    properties:
+      type:           { const: agentHandoff }
+      target_agent:   { type: string }
+      context_fields: { type: array, items: { type: string } }
+    required: [target_agent]
+
+  MemoryTaskNode:
+    properties:
+      type:       { const: memoryTask }
+      store:      { type: string }
+      operation:  { type: string, enum: [read, write, append, delete] }
+      key:        { type: string }
+      value_from: { type: string }
+    required: [store, operation, key]
+
+  VectorTaskNode:
+    properties:
+      type:            { const: vectorTask }
+      store:           { type: string }
+      operation:       { type: string, enum: [embed, query, delete] }
+      embedding_model: { type: string }
+    required: [store, operation]
+
+  ObserveEventNode:
+    properties:
+      type:       { const: observeEvent }
+      platform:   { type: string, enum: [langfuse, phoenix, otel, datadog, custom] }
+      trace_name: { type: string }
+      span_name:  { type: string }
+      attributes: { type: object }
+    required: [platform]
+
+  # ── APN GATE NODES ────────────────────────────────────────────────────
+  ConfidenceGateNode:
+    properties:
+      type:    { const: confidenceGate }
+      source:  { type: string, description: "taskId.confidence" }
+      routes:
+        type: object
+        properties:
+          high:    { type: string }
+          medium:  { type: string }
+          low:     { type: string }
+          default: { type: string }
+    required: [source, routes]
+
+  ReasoningGateNode:
+    properties:
+      type:    { const: reasoningGate }
+      source:  { type: string, description: "taskId.reasoning" }
+      routes:
+        type: array
+        items:
+          type: object
+          required: [match, target]
+          properties:
+            match:  { type: string }
+            target: { type: string }
+      default: { type: string }
+    required: [source, routes]
+
+  ModelVersionGateNode:
+    properties:
+      type:   { const: modelVersionGate }
+      routes:
+        type: array
+        items:
+          type: object
+          required: [model, weight, target]
+          properties:
+            model:  { type: string }
+            weight: { type: number, minimum: 0.0, maximum: 1.0 }
+            target: { type: string }
+    required: [routes]
+
+  SemanticGateNode:
+    properties:
+      type:            { const: semanticGate }
+      embedding_model: { type: string }
+      intents:
+        type: array
+        items:
+          type: object
+          required: [label, description, target]
+          properties:
+            label:       { type: string }
+            description: { type: string }
+            target:      { type: string }
+      default: { type: string }
+    required: [intents]
+
+  McpGateNode:
+    properties:
+      type:   { const: mcpGate }
+      server: { type: string }
+      tool:   { type: string }
+      routes:
+        type: array
+        items:
+          type: object
+          required: [result_match, target]
+          properties:
+            result_match: { type: string }
+            target:       { type: string }
+      default: { type: string }
+    required: [server, tool, routes]
+
+  EscapeGateNode:
+    properties:
+      type:             { const: escapeGate }
+      watches:          { type: array, items: { type: string } }
+      confidence_floor: { type: number, minimum: 0.0, maximum: 1.0, default: 0.5 }
+      triggers:
+        type: object
+        properties:
+          on_failure:        { type: string }
+          on_timeout:        { type: string }
+          on_low_confidence: { type: string }
+    required: [watches, triggers]

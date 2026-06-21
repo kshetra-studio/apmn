@@ -1,0 +1,61 @@
+site_name: APMN — AI Process Model and Notation
+site_url: https://apmn.kshetra.studio
+site_description: Open specification for AI-native business workflows. BPMN for the agentic world.
+site_author: Kshetra Studio
+repo_url: https://github.com/kshetra-studio/apmn
+repo_name: kshetra-studio/apmn
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    primary: deep purple
+    accent: deep purple
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - toc.integrate
+    - content.code.copy
+    - content.action.edit
+  logo: assets/logo.svg
+  favicon: assets/logo.svg
+
+nav:
+  - Home: index.md
+  - Specification:
+    - APMN v0.1: spec/apmn-v0.1.md
+  - Schema:
+    - YAML Schema: schema/apmn-schema.md
+    - BPMN Extension XSD: schema/apmn-extension.md
+  - Examples:
+    - Patient Preadmission: examples/patient_preadmission.md
+
+plugins:
+  - search
+  - include-markdown
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - attr_list
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/kshetra-studio/apmn
+  generator: false
+
+copyright: Copyright &copy; 2026 Kshetra Studio · Apache 2.0
