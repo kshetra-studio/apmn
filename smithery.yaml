@@ -1,0 +1,43 @@
+name: TwinTrack — BPMN to AI Workflow Compiler
+description: >
+  Convert legacy BPMN 2.0 process diagrams to AI-native workflows.
+  Migrate to APMN (AI Process Model and Notation), then compile to
+  Orkes Conductor JSON or Google ADK Python — with confidence routing,
+  MCP tool calls, and human-in-the-loop built in.
+
+homepage: https://bpmn2ai.kshetra.studio
+license: Apache-2.0
+tags:
+  - bpmn
+  - ai-workflow
+  - orkes
+  - google-adk
+  - apmn
+  - process-automation
+  - enterprise
+
+type: remote
+remote:
+  transport: streamable-http
+  url: https://bpmn2ai.kshetra.studio/mcp/
+
+auth:
+  type: header
+  header: X-Api-Key
+  description: >
+    API key from your TwinTrack dashboard at https://bpmn2ai.kshetra.studio.
+    Free tier available — sign in with GitHub or Google.
+
+tools:
+  - name: migrate_bpmn
+    description: Convert BPMN 2.0 XML to APMN YAML. Costs 1 credit.
+  - name: compile_apmn
+    description: Compile APMN YAML to Orkes Conductor JSON or Google ADK Python. Costs 1 credit.
+  - name: suggest_node_upgrade
+    description: Deep guidance on upgrading a node to a better APMN type. Free.
+  - name: review_model
+    description: Holistic best-practice review of a complete APMN model. Free.
+  - name: get_apmn_spec
+    description: Return spec and platform mappings for any APMN node type. Free.
+  - name: list_samples
+    description: List bundled demo BPMN files for testing. Free.

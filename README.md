@@ -134,6 +134,40 @@ APMN is designed as a **superset**, not a replacement:
 
 ---
 
+## TwinTrack MCP Server
+
+[TwinTrack](https://bpmn2ai.kshetra.studio) is the reference compiler for APMN. It exposes an MCP server so any MCP-compatible AI client can convert and compile APMN workflows directly.
+
+### Tools
+
+| Tool | Description | Cost |
+|---|---|---|
+| `migrate_bpmn` | Convert BPMN 2.0 XML → APMN YAML | 1 credit |
+| `compile_apmn` | Compile APMN YAML → Orkes JSON or Google ADK Python | 1 credit |
+| `suggest_node_upgrade` | Guidance on upgrading a node to a better APMN type | Free |
+| `review_model` | Best-practice review of a complete APMN model | Free |
+| `get_apmn_spec` | Spec and platform mappings for any APMN node type | Free |
+| `list_samples` | List bundled demo BPMN files | Free |
+
+### Connect
+
+**Claude Desktop / Cursor** — add to `claude_desktop_config.json`:
+```json
+"twintrack": {
+  "command": "npx",
+  "args": ["-y", "mcp-remote", "https://bpmn2ai.kshetra.studio/mcp/", "--header", "X-Api-Key: YOUR_KEY"]
+}
+```
+
+**Claude Code CLI:**
+```bash
+claude mcp add --transport http twintrack https://bpmn2ai.kshetra.studio/mcp/ --header "X-Api-Key: YOUR_KEY"
+```
+
+Get your API key at [bpmn2ai.kshetra.studio](https://bpmn2ai.kshetra.studio) — free tier available.
+
+---
+
 ## Roadmap
 
 | Version | Theme |
