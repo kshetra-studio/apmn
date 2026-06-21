@@ -23,21 +23,11 @@ A reference APMN workflow for a private hospital preadmission process. Demonstra
 
 ## Workflow
 
-```
-Start → Collect demographics → Policy RAG → Insurance MCP
-      → Compliance gate ──┬→ Apply criteria → Confidence gate
-                          └→ Manual consent ↗       │
-                                              ┌──────┴──────┐
-                                           high           medium
-                                              │               │
-                                          Parallel       Clinical risk
-                                         /      \              │
-                                    Gen docs  Notify      → Parallel ↑
-                                         \      /
-                                          Join → Wristband → Memory
-                                               → Wait → Observe → End
-                                     low → End (rejected)
-```
+Screenshot from the [APMN Modeler](https://apmn-modeler.kshetra.studio):
+
+![Patient Preadmission workflow diagram](patient_preadmission.svg)
+
+*(Diagram shows the start of the flow — open the file in the [APMN Modeler](https://apmn-modeler.kshetra.studio) to explore the full confidence-gated branching, parallel split, and end states.)*
 
 ## APMN Source
 

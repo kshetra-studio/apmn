@@ -51,6 +51,9 @@ markdown_extensions:
   - pymdownx.details
   - tables
   - attr_list
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
 
 extra:
   social:
