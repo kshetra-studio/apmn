@@ -26,6 +26,7 @@ theme:
 
 nav:
   - Home: index.md
+  - Tools: tools.md
   - Specification:
     - APMN v0.1: spec/apmn-v0.1.md
     - "Appendix A: BPMN Mapping": spec/bpmn-mapping.md
