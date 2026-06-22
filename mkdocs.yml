@@ -28,6 +28,7 @@ nav:
   - Home: index.md
   - Specification:
     - APMN v0.1: spec/apmn-v0.1.md
+    - "Appendix A: BPMN Mapping": spec/bpmn-mapping.md
   - Schema:
     - YAML Schema: schema/apmn-schema.md
     - BPMN Extension XSD: schema/apmn-extension.md
