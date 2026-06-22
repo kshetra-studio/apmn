@@ -1,8 +1,9 @@
 ---
 date: 2026-06-22
 categories: [Healthcare, APMN]
+slug: clinical-process-agentic-ai
 ---
-# Agentic AI in Clinical Processes#
+# Agentic AI in Clinical Processes #
 *Your Clinical Processes Already Know Where AI Belongs. BPMN Just Can't Say It*
 *How healthcare organisations can use existing process assets to build a structured, safe, and paced path to agentic AI*
 
