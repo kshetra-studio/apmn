@@ -34,10 +34,14 @@ nav:
     - BPMN Extension XSD: schema/apmn-extension.md
   - Examples:
     - Patient Preadmission: examples/patient_preadmission.md
+  - Articles: articles/index.md
 
 plugins:
   - search
   - include-markdown
+  - blog:
+      blog_dir: articles
+      blog_toc: true
 
 markdown_extensions:
   - toc:
