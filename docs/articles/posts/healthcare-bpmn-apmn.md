@@ -6,7 +6,7 @@ slug: clinical-process-agentic-ai
 # Agentic AI in Clinical Processes #
 *Your Clinical Processes Already Know Where AI Belongs. BPMN Just Can't Say It*
 *How healthcare organisations can use existing process assets to build a structured, safe, and paced path to agentic AI*
-
+<!-- more --> 
 ---
 
 Most healthcare AI transformation programmes start in the wrong place.
@@ -20,7 +20,7 @@ That knowledge gets ignored. Organisations reinvent from scratch. Pilots fail or
 There is a better way.
 
 ---
-<!-- more --> 
+
 ## What BPMN Got Right
 
 BPMN 2.0 is genuinely brilliant at describing how healthcare organisations work. It handles sequential care steps, parallel diagnostic workstreams, decision points based on clinical criteria, human tasks where a clinician must act, service tasks that call external systems, and exception handling when things go wrong.
