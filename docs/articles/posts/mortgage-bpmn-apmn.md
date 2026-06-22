@@ -8,7 +8,7 @@ slug: mortgage-origination-agentic-ai
 
 *The Mortgage Process Already Knows Where AI Belongs. The Industry Just Hasn't Looked*
 *How lenders and brokers can use existing process assets to build a structured, auditable, and paced path to agentic AI -- without reinventing what already works*
-
+<!-- more -->
 ---
 
 The Australian mortgage industry is not short of AI ambition.
@@ -22,7 +22,7 @@ Those diagrams are not legacy debt. They are the most complete, compliance-teste
 The question is not how to build new AI workflows. The question is how to systematically identify where AI belongs inside the workflows that already exist -- and adopt it at a pace that regulators, risk committees, and borrowers can trust.
 
 ---
-<!-- more -->
+
 
 ## What the Mortgage Process Looks Like in BPMN
 
@@ -85,6 +85,8 @@ The constructs most relevant to mortgage:
 
 ## The TwinTrack Principle for Mortgage
 
+![Mortgage origination APMN diagram](images/mortgage-apmn.png)
+
 The core idea is foundational separation between AI infrastructure and deterministic infrastructure, joined by lightweight orchestration ramps.
 
 Your existing mortgage process -- the one that passes APRA audits, that your assessors know, that your compliance team has signed off -- continues to run on the reliable track. It does not change. It does not stop.
@@ -144,13 +146,13 @@ The reliable track never stops. The AI track proves itself. The ramps between th
 
 ## Resources
 
-APMN spec v0.1 (Apache 2.0, open source): apmn.kshetra.studio/spec/apmn-v0.1
+APMN spec v0.1 (Apache 2.0, open source): [apmn.kshetra.studio/spec/apmn-v0.1](https://apmn.kshetra.studio/spec/apmn-v0.1)
 
-APMN visual modeller (MIT, open source): apmn-modeler.kshetra.studio
+APMN visual modeller (MIT, open source): [apmn-modeler.kshetra.studio](https://apmn-modeler.kshetra.studio)
 
-TwinTrack -- BPMN to APMN compiler, free to try: bpmn2ai.kshetra.studio
+TwinTrack -- BPMN to APMN compiler, free to try: [bpmn2ai.kshetra.studio](https://bpmn2ai.kshetra.studio)
 
-Questions or contributions to the APMN standard: github.com/kshetra-studio/apmn
+Questions or contributions to the APMN standard: [github.com/kshetra-studio/apmn](https://github.com/kshetra-studio/apmn)
 
 ---
 
