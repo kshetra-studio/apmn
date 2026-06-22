@@ -43,6 +43,8 @@ The problem is not with BPMN. The problem is that BPMN was designed for a determ
 
 ## Introducing APMN
 
+![Healthcare clinical process diagram](images/healthcare-process.png)
+
 APMN -- AI Process Model and Notation -- is an open extension of BPMN 2.0 that adds the constructs healthcare AI actually needs, while remaining fully backwards compatible with every existing BPMN tool.
 
 It uses BPMN 2.0's official extension mechanism. Your existing diagrams remain valid. APMN adds the vocabulary that BPMN is missing.
@@ -133,13 +135,14 @@ Your existing process knowledge. Your existing compliance framework. A structure
 
 ## Resources
 
-APMN spec v0.1 (Apache 2.0, open source): apmn.kshetra.studio/spec/apmn-v0.1
+APMN spec v0.1 (Apache 2.0, open source): [apmn.kshetra.studio/spec/apmn-v0.1](https://apmn.kshetra.studio/spec/apmn-v0.1)
 
-APMN visual modeller (MIT, open source): apmn-modeler.kshetra.studio
+APMN visual modeller (MIT, open source): [apmn-modeler.kshetra.studio](https://apmn-modeler.kshetra.studio
+)
 
-TwinTrack -- BPMN to APMN compiler, free to try: bpmn2ai.kshetra.studio
+TwinTrack -- BPMN to APMN compiler, free to try: [bpmn2ai.kshetra.studio](https://bpmn2ai.kshetra.studio)
 
-Patient preadmission worked example: apmn.kshetra.studio/examples/patient_preadmission
+Patient preadmission worked example: [apmn.kshetra.studio/examples/patient_preadmission](https://apmn.kshetra.studio/examples/patient_preadmission)
 
 Questions or contributions to the APMN standard: github.com/kshetra-studio/apmn
 
