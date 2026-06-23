@@ -31,7 +31,10 @@ properties:
         type: array
         items:
           type: string
-          enum: [orkes, google_adk, langraph, bedrock, all]
+          enum: [orkes, google_adk, langgraph, bedrock, all]
+      default_model:
+        type: string
+        description: Fallback model for any LLM node that doesn't set its own `model:`.
 
   nodes:
     type: array

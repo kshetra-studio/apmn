@@ -55,7 +55,8 @@ process:
   id: string           # required, unique process identifier
   name: string         # required, human-readable name
   description: string  # optional
-  targets: [string]    # optional — compiler targets (orkes, google_adk, langraph, bedrock)
+  targets: [string]    # optional — compiler targets (orkes, google_adk, langgraph, bedrock)
+  default_model: string # optional — fallback model for any LLM node that doesn't set its own `model:`
 
 nodes: [Node]          # ordered list of all nodes
 flows: [Flow]          # sequence flows connecting nodes
