@@ -1,3 +1,9 @@
+---
+date: 2026-06-22
+categories: [Healthcare, APMN,LangGraph]
+slug: clinical-process-agentic-ai
+---
+
 # The Agentic AI Juggernaut Stalled at the Enterprise Gate. Here Is the Key.
 
 ## Why Sales Document Ingestion Shows Exactly Where the Wheels Come Off
@@ -5,7 +11,7 @@
 ---
 
 ## The Gap Nobody Talks About
-
+<!-- more --> 
 AI engineers are building sophisticated agentic workflows. Greenfield orchestration blueprints in LangGraph. Brownfield migration plans that wrap existing CRM and ECM systems with intelligent retrieval layers. The execution frameworks are mature. LangChain, LangGraph, Orkes Conductor are production-ready. The capability exists.
 
 And then it hits the enterprise boundary.
@@ -59,7 +65,7 @@ APMN answers all of the same questions in a visual process notation that enterpr
 ## The APMN Workflow
 
 Below is the APMN process flow for the sales document ingestion and PII redaction pipeline.
-
+![Sales Doc APMN process diagram](images/master_sales_doc.png)
 ```
 [APMN DIAGRAM PLACEHOLDER]
 Export from APMN Modeler at apmn-modeler.kshetra.studio
