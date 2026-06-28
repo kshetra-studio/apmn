@@ -67,7 +67,6 @@ APMN answers all of the same questions in a visual process notation that enterpr
 Below is the APMN process flow for the sales document ingestion and PII redaction pipeline.
 ![Sales Doc APMN process diagram](images/master_sales_doc.png)
 ```
-[APMN DIAGRAM PLACEHOLDER]
 Export from APMN Modeler at apmn-modeler.kshetra.studio
 Full YAML source at apmn.kshetra.studio/articles
 ```
