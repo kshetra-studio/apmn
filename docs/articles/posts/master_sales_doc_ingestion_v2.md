@@ -5,14 +5,15 @@ slug: sales-doc-ingestion
 ---
 
 
-# The Agentic AI Juggernaut Stalled at the Enterprise Gate. Here Is the Key.
+# The Agentic AI Juggernaut Stalled at the Enterprise Gate.
+To make this concrete, we walk through a real enterprise workflow: sales document ingestion with PII redaction. The problem it illustrates is not specific to sales teams or an industry. It shows up in every agentic workflow that has ever been proposed and never made it past a governance review for enterprise scale implementation
 
-## Why Sales Document Ingestion Shows Exactly Where the Wheels Come Off
+
+<!-- more --> 
 
 ---
 
 ## The Gap Nobody Talks About
-<!-- more --> 
 AI engineers are building sophisticated agentic workflows. Greenfield orchestration blueprints in LangGraph. Brownfield migration plans that wrap existing CRM and ECM systems with intelligent retrieval layers. The execution frameworks are mature. LangChain, LangGraph, Orkes Conductor are production-ready. The capability exists.
 
 And then it hits the enterprise boundary.
@@ -66,10 +67,9 @@ APMN answers all of the same questions in a visual process notation that enterpr
 ## The APMN Workflow
 
 Below is the APMN process flow for the sales document ingestion and PII redaction pipeline.
-![Sales Doc APMN process diagram](images/master_sales_doc.png)
+![Sales Doc APMN process diagram](images/Master_Sales_Doc.png)
 ```
-Export from APMN Modeler at apmn-modeler.kshetra.studio
-Full YAML source at apmn.kshetra.studio/articles
+Full YAML source and interactive build at bpmn2ai.kshetra.studio/build
 ```
 
 The flow reads left to right. Every node type is drawn from the APMN v0.1 specification. The visual notation is BPMN-compatible, meaning any enterprise architect, BA, or process owner who has worked with Appian, IBM BPM, Pega, or Camunda can read this diagram without training.
