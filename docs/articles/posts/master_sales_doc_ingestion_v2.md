@@ -174,6 +174,6 @@ The gates open when the board can see what they are approving. APMN is how they 
 
 *APMN specification v0.1 (Apache 2.0): apmn.kshetra.studio/spec/apmn-v0.1*
 *BPMN mapping reference: apmn.kshetra.studio/spec/bpmn-mapping*
-*Visual modeller (MIT): apmn-modeler.kshetra.studio*
+*Visual modeler: apmn-modeler.kshetra.studio*
 *TwinTrack compiler: bpmn2ai.kshetra.studio*
 *GitHub: github.com/kshetra-studio/apmn*
