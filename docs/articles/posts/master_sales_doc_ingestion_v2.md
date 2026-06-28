@@ -68,9 +68,7 @@ APMN answers all of the same questions in a visual process notation that enterpr
 
 Below is the APMN process flow for the sales document ingestion and PII redaction pipeline.
 ![Sales Doc APMN process diagram](images/Master_Sales_Doc.png)
-```
-Full YAML source and interactive build at bpmn2ai.kshetra.studio/build
-```
+[View APMN YAML source and interactive build to LangGraph or Orkes](https://bpmn2ai.kshetra.studio/build)
 
 The flow reads left to right. Every node type is drawn from the APMN v0.1 specification. The visual notation is BPMN-compatible, meaning any enterprise architect, BA, or process owner who has worked with Appian, IBM BPM, Pega, or Camunda can read this diagram without training.
 
