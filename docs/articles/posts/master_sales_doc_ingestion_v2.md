@@ -1,6 +1,6 @@
 ---
 date: 2026-06-22
-categories: [Healthcare, APMN,LangGraph]
+categories: [Enterprise, APMN,LangGraph]
 slug: clinical-process-agentic-ai
 ---
 
