@@ -1,8 +1,9 @@
 ---
 date: 2026-06-28
 categories: [Enterprise, APMN]
-slug: clinical-process-agentic-ai
+slug: sales-doc-ingestion
 ---
+
 
 # The Agentic AI Juggernaut Stalled at the Enterprise Gate. Here Is the Key.
 
